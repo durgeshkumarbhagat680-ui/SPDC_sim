@@ -1,3 +1,13 @@
+import subprocess
+import sys
+
+# Auto-install dependencies on Streamlit Cloud if requirements.txt fails
+try:
+    import matplotlib
+    import scipy
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "matplotlib", "scipy"])
+
 import streamlit as st
 import numpy as np
 import math
