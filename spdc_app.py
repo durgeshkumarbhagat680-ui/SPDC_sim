@@ -265,8 +265,10 @@ with tab3:
     
     if st.button("Run Simulation"):
         with st.spinner("Calculating Singles profile (double loop)..."):
-            # Detailed loop code
-            dx = (2 * rho / 100)
+            # Use a dynamically scaled integration step size based on the pump beam waist
+            # to prevent numerical under-sampling and Moire/aliasing stripes.
+            dq = 2.0 / wp
+            step = dq / 5.0
             xs_h, ys_h = np.meshgrid(np.linspace(-rho, rho, 100), np.linspace(-rho, rho, 100))
             funcmat_h = np.zeros([100, 100])
             
@@ -285,8 +287,8 @@ with tab3:
                 
                 for k in np.arange(-5, 5):
                     for m in np.arange(-5, 5):
-                        wf = two_photon_wavefunction(xs_h, ys_h, -xs_h + k*dx, -ys_h + m*dx)
-                        funcmat_h += np.square(np.abs(wf)) * dx * dx
+                        wf = two_photon_wavefunction(xs_h, ys_h, -xs_h + k*step, -ys_h + m*step)
+                        funcmat_h += np.square(np.abs(wf)) * step * step
             else:
                 # Type-II
                 def two_photon_wavefunction_typeII(xs, ys, xi, yi):
@@ -306,8 +308,8 @@ with tab3:
                 
                 for k in np.arange(-5, 5):
                     for m in np.arange(-5, 5):
-                        wf_eo, wf_oe = two_photon_wavefunction_typeII(xs_h, ys_h, -xs_h + k*dx, -ys_h + m*dx)
-                        funcmat_h += (np.square(np.abs(wf_eo)) + np.square(np.abs(wf_oe))) * dx * dx
+                        wf_eo, wf_oe = two_photon_wavefunction_typeII(xs_h, ys_h, -xs_h + k*step, -ys_h + m*step)
+                        funcmat_h += (np.square(np.abs(wf_eo)) + np.square(np.abs(wf_oe))) * step * step
                 
             funcmat_h /= np.max(funcmat_h)
             
