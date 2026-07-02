@@ -98,7 +98,7 @@ st.sidebar.markdown("---")
 st.sidebar.subheader("📐 Calculated Angles")
 
 try:
-    if spdc_type.startswith("Type-I"):
+    if spdc_type == "Type-I (e -> o + o)":
         no_p, ne_p = n_bbo(wavep_um, 'o'), n_bbo(wavep_um, 'e')
         no_s, no_i = n_bbo(waves_um, 'o'), n_bbo(wavei_um, 'o')
         target_nep = wavep_um * (no_s / waves_um + no_i / wavei_um)
@@ -144,7 +144,7 @@ ne = neo(wavep_um)
 den = np.square(no * np.sin(thetap)) + np.square(ne * np.cos(thetap))
 etap = ne * (no / np.sqrt(den))
 
-if spdc_type.startswith("Type-I"):
+if spdc_type == "Type-I (e -> o + o)":
     # Type-I phase mismatch: delta_kz = ksz + kiz - kpz
     ksz = ks_val - (1 / (2 * ks_val)) * (qs_x**2 + qs_y**2)
     kiz = ki_val - (1 / (2 * ki_val)) * (qs_x**2 + qs_y**2)
@@ -271,7 +271,7 @@ with tab3:
             funcmat_h = np.zeros([100, 100])
             
             # Use Type-I or Type-II wavefunction depending on type
-            if spdc_type.startswith("Type-I"):
+            if spdc_type == "Type-I (e -> o + o)":
                 def two_photon_wavefunction(xs, ys, xi, yi):
                     ss = (xs**2+ys**2) + (xi**2+yi**2) + 2*np.sqrt((xs**2+ys**2)*(xi**2+yi**2))*np.cos(np.arctan2(ys,xs)-np.arctan2(yi,xi))
                     ks_val = (2 * np.pi) / waves_um
