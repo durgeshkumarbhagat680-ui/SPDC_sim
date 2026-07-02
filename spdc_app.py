@@ -299,13 +299,16 @@ with tab3:
                     tmpeo = ((ksze + kiz - kpz) * (L / 2))
                     tmpoe = ((ksz + kize - kpz) * (L / 2))
                     pumpfield = np.exp(-(wp**2 + ((2j) * (z_um / (kp * etap)))) * (ss / 4.0))
-                    return pumpfield * ((np.sinc(tmpeo / np.pi) * np.exp(-1.0j * tmpeo)) + (np.sinc(tmpoe / np.pi) * np.exp(-1.0j * tmpoe)))
+                    
+                    wf_eo = pumpfield * np.sinc(tmpeo / np.pi) * np.exp(-1.0j * tmpeo)
+                    wf_oe = pumpfield * np.sinc(tmpoe / np.pi) * np.exp(-1.0j * tmpoe)
+                    return wf_eo, wf_oe
                 
                 for k in np.arange(-5, 5):
                     for m in np.arange(-5, 5):
-                        wf = two_photon_wavefunction_typeII(xs_h, ys_h, -xs_h + k*dx, -ys_h + m*dx)
-                        funcmat_h += np.square(np.abs(wf)) * dx * dx
-            
+                        wf_eo, wf_oe = two_photon_wavefunction_typeII(xs_h, ys_h, -xs_h + k*dx, -ys_h + m*dx)
+                        funcmat_h += (np.square(np.abs(wf_eo)) + np.square(np.abs(wf_oe))) * dx * dx
+                
             funcmat_h /= np.max(funcmat_h)
             
             # Coordinate scaling for High-Res Signal and Idler in air
