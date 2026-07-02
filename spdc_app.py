@@ -276,14 +276,12 @@ with tab3:
             if spdc_type == "Type-I (e -> o + o)":
                 def two_photon_wavefunction(xs, ys, xi, yi):
                     ss = (xs**2+ys**2) + (xi**2+yi**2) + 2*np.sqrt((xs**2+ys**2)*(xi**2+yi**2))*np.cos(np.arctan2(ys,xs)-np.arctan2(yi,xi))
-                    ks_val = (2 * np.pi) / waves_um
-                    ki_val = (2 * np.pi) / wavei_um
-                    ksz = (ks_val * nobar_s) - (1 / (2 * ks_val * nobar_s)) * (xs**2 + ys**2)
-                    kiz = (ki_val * nobar_i) - (1 / (2 * ki_val * nobar_i)) * (xi**2 + yi**2)
-                    kpz = kp * etap
+                    kpz = (kp * etap) + (alphap * (xs + xi)) - ((1 / (2 * kp * etap)) * (betap**2 * (xs + xi)**2 + gammap**2 * (ys + yi)**2))
+                    ksz = (kp * nobar_s / 2) - ((1 / (kp * nobar_s)) * (xs**2 + ys**2))
+                    kiz = (kp * nobar_i / 2) - ((1 / (kp * nobar_i)) * (xi**2 + yi**2))
                     tmp = ((ksz + kiz - kpz) * (L / 2))
-                    pumpfield = np.exp(-wp**2 * ss / 4.0)
-                    return pumpfield * np.sinc(tmp / np.pi)
+                    pumpfield = np.exp(-(wp**2 + ((2j) * (z_um / (kp * etap)))) * (ss / 4.0))
+                    return pumpfield * np.sinc(tmp / np.pi) * np.exp(-1j * tmp)
                 
                 for k in np.arange(-5, 5):
                     for m in np.arange(-5, 5):
@@ -294,12 +292,15 @@ with tab3:
                 def two_photon_wavefunction_typeII(xs, ys, xi, yi):
                     ss = (xs**2+ys**2) + (xi**2+yi**2) + 2*np.sqrt((xs**2+ys**2)*(xi**2+yi**2))*np.cos(np.arctan2(ys,xs)-np.arctan2(yi,xi))
                     kpz = (kp * etap) + (alphap * (xs + xi)) - ((1 / (2 * kp * etap)) * (betap**2 * (xs + xi)**2 + gammap**2 * (ys + yi)**2))
-                    ksz = (ks_val * nobar_s) - (1 / (2 * ks_val * nobar_s)) * (xs**2 + ys**2)
-                    kiz = (ki_val * nobar_i) - (1 / (2 * ki_val * nobar_i)) * (xi**2 + yi**2)
-                    ksze = (ks_val * etas) + (alphas * xs) - (1 / (2 * ks_val * etas)) * (betas**2 * xs**2 + gammas**2 * ys**2)
-                    kize = (ki_val * etai) + (alphai * xi) - (1 / (2 * ki_val * etai)) * (betai**2 * xi**2 + gammai**2 * yi**2)
-                    tmpeo = ((ksze + kiz - kpz) * (L / 2))
-                    tmpoe = ((ksz + kize - kpz) * (L / 2))
+                    ksz = (kp * nobar_s / 2) - ((1 / (kp * nobar_s)) * (xs**2 + ys**2))
+                    kiz = (kp * nobar_i / 2) - ((1 / (kp * nobar_i)) * (xi**2 + yi**2))
+                    
+                    ksze = ((kp / 2.0) * etas) + (alphas * xs) - ((1 / (kp * etas)) * (betas**2 * xs**2 + gammas**2 * ys**2))
+                    tmpeo = (ksze + kiz - kpz) * (L / 2)
+                    
+                    kize = ((kp / 2.0) * etai) + (alphai * xi) - ((1 / (kp * etai)) * (betai**2 * xi**2 + gammai**2 * yi**2))
+                    tmpoe = (ksz + kize - kpz) * (L / 2)
+                    
                     pumpfield = np.exp(-(wp**2 + ((2j) * (z_um / (kp * etap)))) * (ss / 4.0))
                     
                     wf_eo = pumpfield * np.sinc(tmpeo / np.pi) * np.exp(-1.0j * tmpeo)
